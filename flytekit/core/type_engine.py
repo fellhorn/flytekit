@@ -2810,7 +2810,15 @@ def _register_default_type_transformers():
     if sys.version_info >= (3, 10):
         from types import UnionType
 
-        TypeEngine.register(UnionTransformer(), [UnionType])
+        # Python 3.14 unified typing.Union and types.UnionType into a single object
+        # (PEP 604), so `types.UnionType is typing.Union`. Registering UnionType as an
+        # additional type would then duplicate UnionTransformer's own python_type
+        # (typing.Union) and raise "already registered". Only register it separately
+        # when it is a distinct object (Python 3.10-3.13).
+        if UnionType is typing.Union:
+            TypeEngine.register(UnionTransformer())
+        else:
+            TypeEngine.register(UnionTransformer(), [UnionType])
     else:
         TypeEngine.register(UnionTransformer())
     TypeEngine.register(DictTransformer())
