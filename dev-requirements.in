@@ -55,7 +55,9 @@ jupyter-client
 ipykernel
 
 orjson
-kubernetes>=12.0.1
+# kubernetes>=37 validates its models with pydantic and rejects ImageSpec objects as V1Container.image,
+# which flytekit's pod template support relies on.
+kubernetes>=12.0.1,<37
 httpx
 
 # protobuf type stubs are shipped separate from the protobuf package
