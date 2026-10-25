@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+      - dennis/py314-ci-test
       - 'release-v**'
   pull_request:
   schedule:
@@ -15,7 +16,7 @@ env:
   FLYTE_SDK_LOGGING_LEVEL: 10 # debug
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -26,7 +27,9 @@ jobs:
     steps:
       - name: Set Python versions for run
         run: |
-          if [[ ${{ github.event_name }} == "schedule" ]]; then
+          if [[ ${{ github.ref_name }} == "dennis/py314-ci-test" ]]; then
+            echo "python_versions=[\"3.13\",\"3.14\"]" >> $GITHUB_ENV
+          elif [[ ${{ github.event_name }} == "schedule" ]]; then
             echo "python_versions=[\"3.10\",\"3.11\",\"3.12\",\"3.13\",\"3.14\"]" >> $GITHUB_ENV
           else
             echo "python_versions=[\"3.14\"]" >> $GITHUB_ENV

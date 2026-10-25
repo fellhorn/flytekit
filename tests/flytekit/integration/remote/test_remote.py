@@ -134,8 +134,10 @@ def test_pydantic_default_input_with_map_task():
     execution_id = run("pydantic_wf.py", "wf")
     remote = FlyteRemote(Config.auto(config_file=CONFIG), PROJECT, DOMAIN)
     execution = remote.fetch_execution(name=execution_id)
-    execution = remote.wait(execution=execution, timeout=datetime.timedelta(minutes=5))
+    execution = remote.wait(execution=execution, timeout=datetime.timedelta(minutes=5), sync_nodes=True)
     print("Execution Error:", execution.error)
+    if execution.error is not None:
+        print("FULL ERROR MESSAGE:\n" + execution.error.message)
     assert execution.closure.phase == WorkflowExecutionPhase.SUCCEEDED, f"Execution failed with phase: {execution.closure.phase}"
 
 
