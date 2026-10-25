@@ -40,8 +40,11 @@ python-magic; (platform_system=='Darwin' or platform_system=='Linux')
 # Google released a new major version of the protobuf library and once that started being used in the ecosystem at large,
 # including `googleapis-common-protos` we started seeing errors in CI, so let's constrain that for now.
 # The issue to support protobuf 5 is being tracked in https://github.com/flyteorg/flyte/issues/5448.
-protobuf<5
-types-protobuf<5
+# protobuf<5 cannot be imported on Python 3.14 (upb extension fails to load).
+protobuf<5; python_version<'3.14'
+protobuf>=5; python_version>='3.14'
+types-protobuf<5; python_version<'3.14'
+types-protobuf>=5; python_version>='3.14'
 
 types-croniter
 types-decorator
